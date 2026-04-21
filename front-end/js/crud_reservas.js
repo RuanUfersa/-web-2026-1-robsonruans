@@ -11,7 +11,10 @@ const API_SALAS = '/api/salas';
 function mostrarToastReserva(mensagem, tipo = 'success') {
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-message');
-    if (!toast) return;
+    if (!toast) {
+        alert(mensagem);
+        return;
+    }
     
     toast.className = `fixed bottom-8 right-8 z-[100] ${tipo === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white px-6 py-4 rounded-xl shadow-xl flex items-center gap-3`;
     toastMsg.textContent = mensagem;
@@ -110,6 +113,44 @@ async function salvarReserva(event) {
     const idField = document.getElementById('reservaId');
     const id = idField.value;
     const idNum = id ? parseInt(id) : null;
+    
+    const dataReserva = document.getElementById('reservaData').value;
+    const horaInicio = document.getElementById('reservaInicio').value;
+    const horaFim = document.getElementById('reservaFim').value;
+    
+    // Validação 1: Data/horário não pode ser no passado
+    const now = new Date();
+    const reservaDateTime = new Date(`${dataReserva}T${horaInicio}`);
+    if (reservaDateTime < now) {
+        mostrarToastReserva('Não é possível fazer reservas para data/horário passado!', 'error');
+        return;
+    }
+    
+    // Validação 2: Horários devem ser múltiplos de 30 minutos
+    const validarMultiplo30 = (hora) => {
+        const [h, m] = hora.split(':').map(Number);
+        return m === 0 || m === 30;
+    };
+    
+    if (!validarMultiplo30(horaInicio) || !validarMultiplo30(horaFim)) {
+        mostrarToastReserva('Os horários devem ser múltiplos de 30 minutos (ex: 14:00, 14:30, 15:00)!', 'error');
+        return;
+    }
+    
+    // Validação 3: Duração máxima de 4 horas
+    const [h1, m1] = horaInicio.split(':').map(Number);
+    const [h2, m2] = horaFim.split(':').map(Number);
+    const duracaoMinutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+    
+    if (duracaoMinutos > 240) { // 4 horas = 240 minutos
+        mostrarToastReserva('A reserva não pode exceder 4 horas!', 'error');
+        return;
+    }
+    
+    if (duracaoMinutos <= 0) {
+        mostrarToastReserva('O horário de fim deve ser maior que o de início!', 'error');
+        return;
+    }
     
     const reserva = {
         sala_id: parseInt(document.getElementById('reservaSalaId').value),
