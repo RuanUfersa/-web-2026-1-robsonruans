@@ -1,6 +1,17 @@
+# service: ufersa-biblioteca
+
+# provider:
+#   name: aws
+#   runtime: nodejs20.x
+#   region: us-east-1
+#   stage: dev
+#   environment:
+#     IS_LOCAL: true
+#     STAGE: dev
+
 service: ufersa-biblioteca
 
-frameworkVersion: 3
+frameworkVersion: "4"
 
 provider:
   name: aws
@@ -10,6 +21,8 @@ provider:
   environment:
     IS_LOCAL: true
     STAGE: dev
+  httpApi:
+    cors: true
 
 functions:
   criarSala:
@@ -207,17 +220,3 @@ package:
 
 plugins:
   - serverless-offline
-  - serverless-dynamodb-local
-
-custom:
-  dynamodb:
-    stages:
-      - dev
-    start:
-      port: 8000
-      noStart: false
-      inMemory: true
-    migration:
-      tableName: UFERSA_Salas
-      partitionKey: id
-      sortKey: data_criacao
