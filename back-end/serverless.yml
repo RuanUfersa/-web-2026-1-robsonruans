@@ -25,6 +25,13 @@ provider:
     cors: true
 
 functions:
+  root:
+    handler: src/crud.frontEndHandler
+    events:
+      - httpApi:
+          path: /
+          method: get
+
   criarSala:
     handler: src/crud.salasHandler
     events:
@@ -39,13 +46,6 @@ functions:
     events:
       - httpApi:
           path: /api/salas
-          method: get
-
-  pagIndex:
-    handler: src/crud.frontEndHandler
-    events:
-      - httpApi:
-          path: /
           method: get
 
   atualizarSala:
@@ -200,14 +200,41 @@ functions:
     handler: src/crud.frontEndHandler
     events:
       - httpApi:
-          path: /{proxy+}
+          path: /gestao_salas/code.html
+          method: get
+      - httpApi:
+          path: /painel_institucional/code.html
+          method: get
+      - httpApi:
+          path: /reservas_emprestimos/code.html
+          method: get
+      - httpApi:
+          path: /ia_relatorios/code.html
+          method: get
+      - httpApi:
+          path: /inventario/code.html
+          method: get
+      - httpApi:
+          path: /ocorrencias/code.html
           method: get
 
   staticJs:
     handler: src/crud.frontEndHandler
     events:
       - httpApi:
-          path: /js/{file+}
+          path: /js/crud_salas.js
+          method: get
+      - httpApi:
+          path: /js/crud_reservas.js
+          method: get
+      - httpApi:
+          path: /js/crud_materiais.js
+          method: get
+      - httpApi:
+          path: /js/api.js
+          method: get
+      - httpApi:
+          path: /js/app.js
           method: get
 
   staticAssets:

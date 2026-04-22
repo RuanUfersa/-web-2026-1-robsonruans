@@ -130,6 +130,7 @@ exports.indexHandler = async () => createResponse(200, { mensagem: 'SIFU Bibliot
 const FRONTEND_PATH = path.join(__dirname, '..', 'front-end');
 exports.frontEndHandler = async (event) => {
   let reqPath = event.rawPath || event.path || '/';
+  console.log('frontEndHandler chamado, path:', reqPath);
   
   // Se for raiz, redirecionar para painel
   if (reqPath === '/' || reqPath === '') {
