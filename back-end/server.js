@@ -196,6 +196,47 @@ function apiReservas(req, res) {
         req.on('end', () => {
             try {
                 const novaReserva = JSON.parse(body);
+                
+                const { data_reserva, hora_inicio, hora_fim } = novaReserva;
+                
+                if (data_reserva && hora_inicio) {
+                    const now = new Date();
+                    const reservaDateTime = new Date(`${data_reserva}T${hora_inicio}`);
+                    if (reservaDateTime < now) {
+                        res.writeHead(400);
+                        res.end(JSON.stringify({ erro: 'Não é possível fazer reservas para data/horário passado!' }));
+                        return;
+                    }
+                }
+                
+                if (hora_inicio && hora_fim) {
+                    const validarMultiplo30 = (hora) => {
+                        const [, m] = hora.split(':').map(Number);
+                        return m === 0 || m === 30;
+                    };
+                    
+                    if (!validarMultiplo30(hora_inicio) || !validarMultiplo30(hora_fim)) {
+                        res.writeHead(400);
+                        res.end(JSON.stringify({ erro: 'Os horários devem ser múltiplos de 30 minutos (ex: 14:00, 14:30, 15:00)!' }));
+                        return;
+                    }
+                    
+                    const [h1, m1] = hora_inicio.split(':').map(Number);
+                    const [h2, m2] = hora_fim.split(':').map(Number);
+                    const duracaoMinutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+                    
+                    if (duracaoMinutos <= 0) {
+                        res.writeHead(400);
+                        res.end(JSON.stringify({ erro: 'O horário de fim deve ser maior que o de início!' }));
+                        return;
+                    }
+                    if (duracaoMinutos > 240) {
+                        res.writeHead(400);
+                        res.end(JSON.stringify({ erro: 'A reserva não pode exceder 4 horas!' }));
+                        return;
+                    }
+                }
+                
                 novaReserva.id = reservas.length > 0 ? Math.max(...reservas.map(r => r.id)) + 1 : 1;
                 reservas.push(novaReserva);
                 saveData('reservas.json', reservas);
@@ -219,6 +260,47 @@ function apiReservas(req, res) {
                     res.end(JSON.stringify({ erro: 'Reserva não encontrada' }));
                     return;
                 }
+                
+                const { data_reserva, hora_inicio, hora_fim } = dados;
+                
+                if (data_reserva && hora_inicio) {
+                    const now = new Date();
+                    const reservaDateTime = new Date(`${data_reserva}T${hora_inicio}`);
+                    if (reservaDateTime < now) {
+                        res.writeHead(400);
+                        res.end(JSON.stringify({ erro: 'Não é possível fazer reservas para data/horário passado!' }));
+                        return;
+                    }
+                }
+                
+                if (hora_inicio && hora_fim) {
+                    const validarMultiplo30 = (hora) => {
+                        const [, m] = hora.split(':').map(Number);
+                        return m === 0 || m === 30;
+                    };
+                    
+                    if (!validarMultiplo30(hora_inicio) || !validarMultiplo30(hora_fim)) {
+                        res.writeHead(400);
+                        res.end(JSON.stringify({ erro: 'Os horários devem ser múltiplos de 30 minutos!' }));
+                        return;
+                    }
+                    
+                    const [h1, m1] = hora_inicio.split(':').map(Number);
+                    const [h2, m2] = hora_fim.split(':').map(Number);
+                    const duracaoMinutos = (h2 * 60 + m2) - (h1 * 60 + m1);
+                    
+                    if (duracaoMinutos <= 0) {
+                        res.writeHead(400);
+                        res.end(JSON.stringify({ erro: 'O horário de fim deve ser maior que o de início!' }));
+                        return;
+                    }
+                    if (duracaoMinutos > 240) {
+                        res.writeHead(400);
+                        res.end(JSON.stringify({ erro: 'A reserva não pode exceder 4 horas!' }));
+                        return;
+                    }
+                }
+                
                 reservas[index] = { ...reservas[index], ...dados, id: id };
                 saveData('reservas.json', reservas);
                 res.end(JSON.stringify({ mensagem: 'Reserva atualizada com sucesso' }));
