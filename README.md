@@ -10,6 +10,15 @@ projeto/
 └── back-end/     # API e lógica do servidor (Node.js)
 ```
 
+## Módulos do Sistema
+
+- **Gestão de Salas** - Cadastro e gerenciamento de salas de estudo
+- **Reservas e Empréstimos** - Sistema de reservas de salas e materiais
+- **Inventário** - Controle de materiais da biblioteca
+- **Ocorrências** - Registro e acompanhamento de ocorrências
+- **Painel Institucional** - Dashboard com métricas e relatórios
+- **IA Relatórios** - Geração de relatórios inteligentes
+
 ## Como Rodar
 
 ### Branch main
@@ -42,3 +51,8 @@ npm run dev:offline
 - **Front-end:** HTML5, Tailwind CSS, JavaScript Vanilla
 - **Back-end:** Node.js, Express, SQLite/DynamoDB
 - **Infraestrutura:** AWS Lambda, Serverless Framework
+
+## Repositórios
+
+- **Origin**: https://github.com/RuanUfersa/-web-2026-1-robsonruans
+- **Origin2**: https://github.com/RuanUfersa/-web-2026-1-robsonruan
